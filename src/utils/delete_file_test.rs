@@ -1,8 +1,6 @@
 use std::fs;
 
-/*
-    Suppression du dossier "tmp_result"
-*/
+///suppression du dossier "tmp_result"
 pub fn delete_file_test(dir_to_delete: &str) {
     
     match fs::remove_dir_all(dir_to_delete) {

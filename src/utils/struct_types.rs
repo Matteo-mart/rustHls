@@ -18,10 +18,6 @@ pub struct Stream {
     pub tags: HashMap<String, String>,
     #[serde(default)]
     pub disposition_descriptions: i32,
-    // #[serde(default)]
-    // pub disposition_default: i32,
-    // #[serde(default)]
-    // pub disposition_captions: i32,
 }
 
 #[derive(Debug, Clone)]

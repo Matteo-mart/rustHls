@@ -9,6 +9,10 @@ use regex::Regex;
 use lazy_static::lazy_static;
 
 lazy_static! {
+    /// Expressions régulières pour parser les attributs des playlists HLS :
+    /// - RE_GROUP_ID : Extrait l'identifiant de groupe audio.
+    /// - RE_AUDIO_REF : Identifie et permet le remplacement du tag AUDIO dans STREAM-INF.
+    /// - RE_BANDWIDTH, RE_RESOLUTION, RE_CODECS : Extraient les métadonnées techniques des flux vidéo.
     static ref RE_GROUP_ID: Regex = Regex::new(r#"GROUP-ID="([^"]*)""#).unwrap();
     static ref RE_AUDIO_REF: Regex = Regex::new(r#"AUDIO="[^"]*""#).unwrap();
     static ref RE_BANDWIDTH: Regex = Regex::new(r"BANDWIDTH=(\d+)").unwrap();
@@ -16,6 +20,9 @@ lazy_static! {
     static ref RE_CODECS: Regex = Regex::new(r#"CODECS="([^"]*)""#).unwrap();
 }
 
+/// **Point d'entrée pour la création d'une Master Playlist (Super Playlist).**
+/// Fusionne plusieurs playlists M3U8 en une seule en dédoublonnant les pistes audio
+/// et les variantes vidéo, puis écrit le résultat dans le dossier de sortie.
 pub fn create_super_playlist(playlists: Vec<String>, directory_out: &str) -> Result<(), Box<dyn std::error::Error>> {
     let mut unique_audios: HashSet<String> = HashSet::new();
     let mut unique_videos: HashMap<String, Variant> = HashMap::new();
@@ -31,6 +38,9 @@ pub fn create_super_playlist(playlists: Vec<String>, directory_out: &str) -> Res
     write_playlist(directory_out, unique_audios, unique_videos)
 }
 
+/// **Analyse le contenu d'une playlist individuelle.**
+/// Parcourt les lignes pour extraire les pistes audio et les variantes vidéo (STREAM-INF).
+/// Met à jour les collections partagées (HashSet et HashMap) pour garantir l'unicité des flux.
 fn process_playlist(
     path: &Path,
     audios: &mut HashSet<String>,
@@ -97,6 +107,8 @@ fn process_playlist(
     Ok(())
 }
 
+/// **Récupère l'identifiant du groupe audio (GROUP-ID) depuis les lignes d'une playlist.**
+/// Cherche la première occurrence d'un média audio pour en extraire le nom du groupe.
 fn extract_group_id(lines: &[String]) -> String {
     for line in lines {
         if line.starts_with("#EXT-X-MEDIA:TYPE=AUDIO") {
@@ -108,6 +120,9 @@ fn extract_group_id(lines: &[String]) -> String {
     String::new()
 }
 
+/// **Génère et écrit le fichier final master.m3u8.**
+/// Assemble l'en-tête standard HLS, les lignes audio uniques et les variantes vidéo
+/// collectées lors du traitement des différentes playlists.
 fn write_playlist(
     directory_out: &str, 
     audios: HashSet<String>, 

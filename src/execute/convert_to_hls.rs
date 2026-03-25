@@ -6,13 +6,14 @@ use super::segment::file_name_without_extension;
 use super::ffprobe::ffprobe;
 use crate::utils::struct_types::ConvertToHlsOutput;
 
-// Fonction qui convertit des fichiers vidéo en format HLS
+
 
 // param:
 // - input_files : la liste des fichiers vidéo à convertir
 // - directory_out : le dossier où seront stockés les fichiers générés
 
 // retourne sois chemin playlist soit erreur
+///Fonction qui convertit des fichiers vidéo en format HLS
 pub fn convert_to_hls(
     input_files: &[String],
     directory_out: &str,

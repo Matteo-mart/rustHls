@@ -3,7 +3,9 @@ use std::collections::HashMap;
 use std::io::{BufRead, BufReader, Write};
 use crate::execute::ffprobe::ffprobe;
 
-
+/// **Analyse et modification d'une playlist HLS pour la gestion de l'audiodescription.**
+/// Cette fonction scanne les métadonnées audio via ffprobe et met à jour le fichier .m3u8
+/// en ajoutant les tags d'accessibilité (CHARACTERISTICS) et en renommant les pistes "AD".
 pub fn modifier_playlist(chemin_m3u8: &str, video_source: &str) -> Result<(), Box<dyn std::error::Error>> {
     
     let res = ffprobe(video_source).map_err(|e| e.to_string())?;
@@ -65,6 +67,8 @@ pub fn modifier_playlist(chemin_m3u8: &str, video_source: &str) -> Result<(), Bo
     Ok(())
 }
 
+/// **Extraction d'une valeur d'attribut dans une ligne de tag HLS.**
+/// Cherche un motif de type `CLE="VALEUR"` et retourne la chaîne située entre les guillemets.
 fn extraire(ligne: &str, attr: &str) -> String {
     let pattern = format!("{}=\"", attr);
     let p: Vec<&str> = ligne.split(&pattern).collect();
@@ -76,6 +80,9 @@ fn extraire(ligne: &str, attr: &str) -> String {
     p[1].split('"').next().unwrap_or("").to_string()
 }
 
+/// **Remplacement de la valeur d'un attribut spécifique dans une ligne de texte.**
+/// Identifie l'ancienne valeur associée à l'attribut fourni et la remplace par la nouvelle
+/// tout en conservant le formatage des guillemets.
 fn remplacer(ligne: &str, attr: &str, valeur: &str) -> String {
     let ancienne = extraire(ligne, attr);
 

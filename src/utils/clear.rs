@@ -1,8 +1,6 @@
 use std::process::Command;
 
-/*
-    Nettoie le terminal
-*/
+///nettoie le terminal
 pub fn clear() {
 
     Command::new("clear")

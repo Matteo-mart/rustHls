@@ -1,8 +1,6 @@
 use std::fs;
 
-/*
-    Affichage du contenu du fichier 'tmp_result'
-*/
+///Affichage du contenu du fichier 'tmp_result'
 pub fn affichage_file_test(dir_name: &str) {
     println!("\n--- Affichage du dossier: {} ---", dir_name);
 

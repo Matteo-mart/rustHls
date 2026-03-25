@@ -1,8 +1,6 @@
 use std::fs;
 
-/*
-    Création du dossier "tmp_result"
-*/
+///creation du dossier "tmp_result"
 pub fn create_file_test(dir_name: &str) {
 
     match fs::create_dir_all(dir_name) {

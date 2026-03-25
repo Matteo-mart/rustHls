@@ -2,6 +2,7 @@ use std::process::Command;
 use serde_json;
 use crate::utils::struct_types::FfprobeOutput;
 
+///lancement de ffprobe
 pub fn ffprobe(file: &str) -> Result<FfprobeOutput, String> {
     let output = Command::new("ffprobe")
         .args([
