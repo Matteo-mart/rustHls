@@ -4,8 +4,8 @@ mod convert;
 
 
 fn main() {
-    
-    let video_source = "groovy-all-videos-and-all-audios.mp4";
+
+    let video_source = "video/test_comment_captions.mp4";
     let directory_output = "tmp_result";
 
     utils::clear::clear();

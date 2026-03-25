@@ -11,13 +11,11 @@ pub fn modifier_playlist(chemin_m3u8: &str, video_source: &str) -> Result<(), Bo
 
     for s in res.streams {
         if s.codec_type == "audio" {
-            // Accès direct à la HashMap (plus besoin de as_ref ou and_then)
             let lang = s.tags
                 .get("language")
-                .cloned() // On clone le String trouvé dans l'Option
+                .cloned()
                 .unwrap_or_else(|| "und".to_string());
 
-            // Détection AD basée sur tes nouveaux champs à plat
             let is_ad = s.disposition_descriptions == 1; 
 
             let entry = audio_map.entry(lang).or_insert(false);
@@ -39,7 +37,7 @@ pub fn modifier_playlist(chemin_m3u8: &str, video_source: &str) -> Result<(), Bo
             let lang = extraire(ligne, "LANGUAGE");
             let mut nouveau_name = lang.clone();
 
-            // Vérifier si la langue est marquée comme AD dans notre map
+            // Vérifier si la langue est marquée comme AD dans map
             if *audio_map.get(&lang).unwrap_or(&false) {
                 nouveau_name = "AD".to_string();
 
@@ -58,7 +56,7 @@ pub fn modifier_playlist(chemin_m3u8: &str, video_source: &str) -> Result<(), Bo
         nouvelles_lignes.push(ligne_traitee);
     }
 
-    // 4. Réécriture du fichier
+    // Réécriture du fichier
     let mut flux_sortie = fs::File::create(chemin_m3u8)?;
     for l in nouvelles_lignes {
         writeln!(flux_sortie, "{}", l)?;
