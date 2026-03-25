@@ -67,12 +67,6 @@ pub fn modifier_playlist(chemin_m3u8: &str, video_source: &str) -> Result<(), Bo
     Ok(())
 }
 
-
-
-
-
-
-
 fn extraire(ligne: &str, attr: &str) -> String {
     let pattern = format!("{}=\"", attr);
     let p: Vec<&str> = ligne.split(&pattern).collect();

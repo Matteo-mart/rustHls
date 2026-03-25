@@ -24,3 +24,10 @@ pub struct Stream {
     // pub disposition_captions: i32,
 }
 
+#[derive(Debug, Clone)]
+pub struct Variant {
+    pub bandwidth: u64,
+    pub resolution: String,
+    pub codecs: String,
+    pub uri: String,
+}
