@@ -1,9 +1,29 @@
-mod delete_file_test;
-mod create_file_test;
+mod utils;
+mod execute;
+mod convert;
+
 
 fn main() {
-    // println!("Hello, world!");
+    
+    let video_source = "groovy-all-videos-and-all-audios.mp4";
+    let directory_output = "tmp_result";
 
-    delete_file_test::delete_file_test("tmp_result");
-    create_file_test::create_file_test("tmp_result");
+    utils::clear::clear();
+    println!("\n----- LANCEMENT -----");
+
+    execute::affichage::affichage_file_test("tmp_result");
+    utils::delete_file_test::delete_file_test("tmp_result");
+    utils::create_file_test::create_file_test("tmp_result");
+
+    match convert::convert(video_source, directory_output) {
+        Ok(chemin) => {
+            println!("Succès ! La playlist finale est ici : {}", chemin);
+        }
+        Err(e) => {
+            eprintln!("Le processus a échoué lamentablement : {}", e);
+            std::process::exit(1);
+        }
+    }
+
+    println!("\n----- FIN -----");
 }
