@@ -16,8 +16,17 @@ fn main() {
     utils::create_file_test::create_file_test("tmp_result");
 
     match convert::convert(video_source, directory_output) {
-        Ok(chemin) => {
-            println!("Succès ! La playlist finale est ici : {}", chemin);
+        Ok(chemin_playlist) => {
+            println!("Succès ! Playlist générée : {}", chemin_playlist);
+
+            let playlists = vec![chemin_playlist]; 
+            
+            println!("Génération de la master playlist...");
+            if let Err(e) = execute::super_playlist::create_super_playlist(playlists, directory_output) {
+                eprintln!("Erreur lors de la création de la super playlist : {}", e);
+            } else {
+                println!("Master playlist 'master.m3u8' créée avec succès dans {}", directory_output);
+            }
         }
         Err(e) => {
             eprintln!("Le processus a échoué lamentablement : {}", e);

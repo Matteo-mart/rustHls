@@ -16,6 +16,5 @@ pub fn convert(video_source: &str, directory_output: &str) -> Result<String, Str
 
     println!("Modification de la playlist terminée.");
 
-    // 3. Retourne le chemin final
     Ok(out.playlist_file)
 }
