@@ -4,12 +4,12 @@ use crate::utils::struct_types::{Stream, FFprobeOutput};
 
 /// Commande FFprobe
 pub fn ffprobe(file: &str) {
-    println!("\nAnalyse de {} avec FFprobe", file);
+    // println!("\nAnalyse de {} avec FFprobe", file);
     Command::new("ffprobe")
         .args(["-v", "error", "-i", file, "-print_format", "json", "-show_streams"])
         .output()
         .expect("Erreur sur la commande FFprobe");
-    println!("\nFFprobe réussie");
+    // println!("\nFFprobe réussie");
 }
 
 /// Récupère les streams via FFprobe

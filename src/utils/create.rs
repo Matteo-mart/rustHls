@@ -4,7 +4,7 @@ use std::fs;
 pub fn create() -> std::io::Result<()>{
     
     fs::create_dir("tmp_result")?;
-    println!("\nDossier 'tmp_result' crée");
+    // println!("\nDossier 'tmp_result' crée");
     Ok(())
 
 }

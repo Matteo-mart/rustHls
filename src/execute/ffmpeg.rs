@@ -3,7 +3,7 @@ use crate::execute::ffprobe;
 
 ///Commande FFmpeg
 pub fn ffmpeg(files: &[(&str, &str)]) {
-    println!("Commande FFmpeg");
+    // println!("Commande FFmpeg");
 
     // let directory_out = "tmp_result";
     let master_playlist = "playlist.m3u8";
