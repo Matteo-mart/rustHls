@@ -1,8 +1,0 @@
-#EXTM3U
-#EXT-X-MEDIA:TYPE=AUDIO,GROUP-ID="group_test_comment_captions",NAME="deu",DEFAULT=YES,LANGUAGE="deu",CHANNELS="2",URI="test_comment_captions/a_deu.m3u8"
-#EXT-X-MEDIA:TYPE=AUDIO,GROUP-ID="group_test_comment_captions",NAME="eng",DEFAULT=YES,LANGUAGE="eng",CHANNELS="2",URI="test_comment_captions/a_eng.m3u8"
-#EXT-X-MEDIA:TYPE=AUDIO,GROUP-ID="group_test_comment_captions",NAME="fra",DEFAULT=YES,LANGUAGE="fra",CHANNELS="2",URI="test_comment_captions/a_fra.m3u8"
-#EXT-X-STREAM-INF:BANDWIDTH=5439065,AVERAGE-BANDWIDTH=1985397,RESOLUTION=1920x1080,CODECS="avc1.640029,mp4a.40.2",AUDIO="group_test_comment_captions"
-test_comment_captions/v_und.m3u8
-#EXT-X-STREAM-INF:BANDWIDTH=3293282,AVERAGE-BANDWIDTH=1355629,RESOLUTION=1920x1080,CODECS="avc1.640029,mp4a.40.2",AUDIO="group_test_comment_captions"
-test_comment_captions/v_und.m3u8
