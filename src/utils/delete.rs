@@ -1,19 +1,21 @@
 use std::fs;
+use std::io;
+use std::path::Path;
 
-/// Supprime le contenu du dossier tmp_result
-pub fn delete(file_tmp_result: &str) -> std::io::Result<()> {
-    let dir_to_delete = file_tmp_result;
-    // println!("\nSuppression du dossier de travail et de son contenu: {}", dir_to_delete);
+pub fn delete<P: AsRef<Path>>(path: P) -> io::Result<()> {
+    let path = path.as_ref();
 
-    match fs::remove_dir_all(dir_to_delete) {
-        Ok(_) => println!("Dossier supprimé avec succès."),
-        Err(e) if e.kind() == std::io::ErrorKind::NotFound => {
-            println!("Le dossier cible n'existe pas, pas de suppression nécessaire.");
+    match fs::remove_dir_all(path) {
+        Ok(_) => {
+            Ok(())
+        }
+        Err(e) if e.kind() == io::ErrorKind::NotFound => {
+            println!("Le dossier {:?} n'existe pas, aucune action requise.", path);
+            Ok(())
         }
         Err(e) => {
-            println!("Erreur lors de la suppression du dossier {}: {}", dir_to_delete, e);
+            eprintln!("Erreur lors de la suppression du dossier {:?}: {}", path, e);
+            Err(e)
         }
     }
-
-    Ok(())
 }

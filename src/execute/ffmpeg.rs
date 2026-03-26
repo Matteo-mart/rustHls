@@ -2,11 +2,11 @@ use std::process::Command;
 use crate::execute::ffprobe;
 
 /// Commande FFmpeg
-pub fn ffmpeg(chemin_video: &[(&str, &str)]) {
+pub fn ffmpeg(chemin_video: &[(&str, &str)], file_tmp_result: &str) {
     let master_playlist = "playlist.m3u8";
 
     for (_, base_name) in chemin_video.iter() {
-        let sub_dir = format!("tmp_result/{}", base_name);
+        let sub_dir = format!("{}/{}", file_tmp_result, base_name);
         std::fs::create_dir_all(&sub_dir)
             .expect(&format!("Impossible de créer le dossier {}", sub_dir));
     }
@@ -65,8 +65,8 @@ pub fn ffmpeg(chemin_video: &[(&str, &str)]) {
     full_stream_map.extend(stream_map_video.clone());
     let full_stream_map = full_stream_map.join(" ");
 
-    let segment_filename = "tmp_result/%v_%03d.ts".to_string();
-    let output_playlist = "tmp_result/%v.m3u8".to_string();
+    let segment_filename = format!("{}/%v_%03d.ts", file_tmp_result);
+    let output_playlist = format!("{}/%v.m3u8", file_tmp_result);
 
     let mut args: Vec<String> = vec![];
     args.extend(input_args);
