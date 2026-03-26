@@ -1,16 +1,11 @@
-use std::{process::Command};
+use std::process::Command;
 use crate::execute::ffprobe;
 
-///Commande FFmpeg
-pub fn ffmpeg(files: &[(&str, &str)]) {
-    // println!("Commande FFmpeg");
-
-    // let directory_out = "tmp_result";
+/// Commande FFmpeg
+pub fn ffmpeg(chemin_video: &[(&str, &str)]) {
     let master_playlist = "playlist.m3u8";
 
-
-    for (_, base_name) in files.iter() {
-        // let sub_dir = format!("{}/{}", directory_out, base_name);
+    for (_, base_name) in chemin_video.iter() {
         let sub_dir = format!("tmp_result/{}", base_name);
         std::fs::create_dir_all(&sub_dir)
             .expect(&format!("Impossible de créer le dossier {}", sub_dir));
@@ -23,23 +18,20 @@ pub fn ffmpeg(files: &[(&str, &str)]) {
     let mut global_idx_audio = 0;
     let mut global_idx_video = 0;
 
-    for (file_idx, (file, base_name)) in files.iter().enumerate() {
+    for (chemin_video_idx, (chemin_video, base_name)) in chemin_video.iter().enumerate() {
         input_args.push("-i".to_string());
-        input_args.push(file.to_string());
+        input_args.push(chemin_video.to_string());
 
-        let streams = ffprobe::get_streams(file);
+        let streams = ffprobe::get_streams(chemin_video);
         let mut local_idx_audio = 0;
         let mut local_idx_video = 0;
 
-
         for stream in &streams {
             let lang = stream.lang.as_deref().unwrap_or("und");
-            
             match stream.codec_type.as_str() {
                 "video" => {
                     map_args.push("-map".to_string());
-                    map_args.push(format!("{}:v:{}", file_idx, local_idx_video));
-
+                    map_args.push(format!("{}:v:{}", chemin_video_idx, local_idx_video));
                     let stream_name = format!("{}/v_{}", base_name, lang);
                     let desc = if stream.is_description {
                         ",characteristics:public.accessibility.describes-video"
@@ -53,11 +45,9 @@ pub fn ffmpeg(files: &[(&str, &str)]) {
                     global_idx_video += 1;
                     local_idx_video += 1;
                 }
-
                 "audio" => {
                     map_args.push("-map".to_string());
-                    map_args.push(format!("{}:a:{}", file_idx, local_idx_audio));
-
+                    map_args.push(format!("{}:a:{}", chemin_video_idx, local_idx_audio));
                     let stream_name = format!("{}/a_{}", base_name, lang);
                     stream_map_audio.push(format!(
                         "a:{},agroup:{},name:{},language:{}",
@@ -71,18 +61,12 @@ pub fn ffmpeg(files: &[(&str, &str)]) {
         }
     }
 
-
-
-    // Audio en premier, puis vidéo (comme le Go)
     let mut full_stream_map = stream_map_audio.clone();
     full_stream_map.extend(stream_map_video.clone());
     let full_stream_map = full_stream_map.join(" ");
 
-    // let segment_filename = format!("{}/%v_%03d.ts", directory_out);
-    // let output_playlist = format!("{}/%v.m3u8", directory_out);
-
-    let segment_filename = format!("tmp_result/%v_%03d.ts");
-    let output_playlist = format!("tmp_result/%v.m3u8");
+    let segment_filename = "tmp_result/%v_%03d.ts".to_string();
+    let output_playlist = "tmp_result/%v.m3u8".to_string();
 
     let mut args: Vec<String> = vec![];
     args.extend(input_args);
@@ -98,8 +82,6 @@ pub fn ffmpeg(files: &[(&str, &str)]) {
         "-hls_segment_filename".to_string(), segment_filename,
         output_playlist,
     ]);
-
-    println!("\nCOMMANDE : ffmpeg {}\n", args.join(" "));
 
     let status = Command::new("ffmpeg")
         .args(&args)

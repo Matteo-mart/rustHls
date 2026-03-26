@@ -10,12 +10,13 @@ fn main() {
     }
 
     let chemin_video = &args[2];
+    let file_tmp_result = "tmp_result";
     // println!("Le chemin est {}", chemin_video);
 
-    // let _affichage_dossier = utils::affichage_dossier::affichage_dossier();
-    let _delete = utils::delete::delete();
-    let _create = utils::create::create();
+    let _delete = utils::delete::delete(file_tmp_result);
+    let _create = utils::create::create(file_tmp_result);
     let _convert_to_hls = execute::convert_to_hls::convert_to_hls(chemin_video);
-    // let _convert_to_hls = execute::convert_to_hls::convert_to_hls("video/test_comment_captions.mp4");
+
+    println!("\n----- FIN -----")
 
 }

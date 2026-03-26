@@ -3,13 +3,11 @@ use serde_json;
 use crate::utils::struct_types::{Stream, FFprobeOutput};
 
 /// Commande FFprobe
-pub fn ffprobe(file: &str) {
-    // println!("\nAnalyse de {} avec FFprobe", file);
+pub fn ffprobe(chemin_video: &str) {
     Command::new("ffprobe")
-        .args(["-v", "error", "-i", file, "-print_format", "json", "-show_streams"])
+        .args(["-v", "error", "-i", chemin_video, "-print_format", "json", "-show_streams"])
         .output()
         .expect("Erreur sur la commande FFprobe");
-    // println!("\nFFprobe réussie");
 }
 
 /// Récupère les streams via FFprobe
@@ -36,14 +34,14 @@ pub fn get_streams(file: &str) -> Vec<Stream> {
 }
 
 /// Détecte la hauteur vidéo via FFprobe
-pub fn get_video_height(file: &str) -> u32 {
+pub fn get_video_height(chemin_video: &str) -> u32 {
     let output = Command::new("ffprobe")
         .args([
             "-v", "error",
             "-select_streams", "v:0",
             "-show_entries", "stream=height",
             "-of", "csv=p=0",
-            file,
+            chemin_video,
         ])
         .output()
         .expect("Erreur : impossible de lancer FFprobe");
@@ -53,8 +51,8 @@ pub fn get_video_height(file: &str) -> u32 {
 }
 
 /// Retourne la qualité selon la hauteur vidéo
-pub fn get_quality(file: &str) -> &'static str {
-    match get_video_height(file) {
+pub fn get_quality(chemin_video: &str) -> &'static str {
+    match get_video_height(chemin_video) {
         h if h >= 1080 => "hd",
         h if h >= 480  => "sd",
         _              => "md",
