@@ -1,6 +1,5 @@
 use crate::execute::ffprobe::{ffprobe, get_quality};
 use crate::execute::ffmpeg::ffmpeg;
-use crate::execute::modif_playlist;
 
 /// Conversion en HLS processus
 pub fn convert_to_hls(chemin_video: &str, file_tmp_result: &str) {
@@ -15,10 +14,5 @@ pub fn convert_to_hls(chemin_video: &str, file_tmp_result: &str) {
             &base_name
         )], 
         file_tmp_result
-    );
-
-
-    let chemin_m3u8 = "playlist.m3u8";
-
-    modif_playlist::modif_playlist(chemin_m3u8);
+    );  
 }
