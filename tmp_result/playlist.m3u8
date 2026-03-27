@@ -1,19 +1,19 @@
 #EXTM3U
 #EXT-X-VERSION:6
 #EXT-X-MEDIA:TYPE=AUDIO,GROUP-ID="group_video/groovy-all-videos-and-all-audios.mp4",CHARACTERISTICS="public.accessibility.describes-video",NAME="AD",DEFAULT=YES,LANGUAGE="eng",CHANNELS="2",URI="a_eng_0.m3u8"
-#EXT-X-MEDIA:TYPE=AUDIO,GROUP-ID="group_video/groovy-all-videos-and-all-audios.mp4",NAME="deu",DEFAULT=YES,LANGUAGE="deu",CHANNELS="2",URI="a_deu_0.m3u8"
-#EXT-X-MEDIA:TYPE=AUDIO,GROUP-ID="group_video/groovy-all-videos-and-all-audios.mp4",NAME="fra",DEFAULT=YES,LANGUAGE="fra",CHANNELS="2",URI="a_fra_0.m3u8"
+#EXT-X-MEDIA:TYPE=AUDIO,GROUP-ID="group_video/groovy-all-videos-and-all-audios.mp4",NAME="deu",DEFAULT=YES,LANGUAGE="deu",CHANNELS="2",URI="a_deu_1.m3u8"
+#EXT-X-MEDIA:TYPE=AUDIO,GROUP-ID="group_video/groovy-all-videos-and-all-audios.mp4",NAME="fra",DEFAULT=YES,LANGUAGE="fra",CHANNELS="2",URI="a_fra_2.m3u8"
 #EXT-X-STREAM-INF:BANDWIDTH=3293282,AVERAGE-BANDWIDTH=1355629,RESOLUTION=1920x1080,CODECS="avc1.640029,mp4a.40.2",AUDIO="group_video/groovy-all-videos-and-all-audios.mp4"
 v_und_0.m3u8
 
 #EXT-X-STREAM-INF:BANDWIDTH=5439065,AVERAGE-BANDWIDTH=1985397,RESOLUTION=1920x1080,CODECS="avc1.640029,mp4a.40.2",AUDIO="group_video/groovy-all-videos-and-all-audios.mp4"
-v_und_0.m3u8
+v_und_1.m3u8
 
 #EXT-X-STREAM-INF:BANDWIDTH=141600,AVERAGE-BANDWIDTH=140060,CODECS="mp4a.40.2",AUDIO="group_video/groovy-all-videos-and-all-audios.mp4"
 a_eng_0.m3u8
 
 #EXT-X-STREAM-INF:BANDWIDTH=141600,AVERAGE-BANDWIDTH=140310,CODECS="mp4a.40.2",AUDIO="group_video/groovy-all-videos-and-all-audios.mp4"
-a_deu_0.m3u8
+a_deu_1.m3u8
 
 #EXT-X-STREAM-INF:BANDWIDTH=141602,AVERAGE-BANDWIDTH=140636,CODECS="mp4a.40.2",AUDIO="group_video/groovy-all-videos-and-all-audios.mp4"
-a_fra_0.m3u8
+a_fra_2.m3u8

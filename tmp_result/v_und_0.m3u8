@@ -11,7 +11,7 @@ v_und_0_001.ts
 v_und_0_002.ts
 #EXTINF:10,
 v_und_0_003.ts
-#EXTINF:7,
+#EXTINF:10,
 v_und_0_004.ts
 #EXTINF:10,
 v_und_0_005.ts
@@ -19,9 +19,9 @@ v_und_0_005.ts
 v_und_0_006.ts
 #EXTINF:10,
 v_und_0_007.ts
-#EXTINF:10,
-v_und_0_008.ts
 #EXTINF:8,
+v_und_0_008.ts
+#EXTINF:9,
 v_und_0_009.ts
 #EXTINF:10,
 v_und_0_010.ts
@@ -29,6 +29,6 @@ v_und_0_010.ts
 v_und_0_011.ts
 #EXTINF:10,
 v_und_0_012.ts
-#EXTINF:4,
+#EXTINF:3,
 v_und_0_013.ts
 #EXT-X-ENDLIST
