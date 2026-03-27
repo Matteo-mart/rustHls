@@ -39,9 +39,8 @@ pub fn modifier_playlist(path: &str, source: &str) -> Result<(), Box<dyn std::er
 }
 
 fn extraire(ligne: &str, attr: &str) -> String {
-    ligne.split(&format!("{}=\"", attr))
-        .nth(1)
-        .and_then(|s| s.split('"').next())
+    ligne.split_once(&format!("{}=\"", attr))
+        .and_then(|(_, reste)| reste.split('"').next())
         .unwrap_or_default()
         .to_string()
 }

@@ -9,35 +9,36 @@ pub fn ffmpeg(videos: &[(String, String)], out_dir: &str) {
     let streams_path = Path::new(out_dir).join("streams");
     fs::create_dir_all(&streams_path).expect("Erreur création dossiers");
 
+    //terminal propre
     let mut args = vec!["-hide_banner", "-loglevel", "error"].into_iter().map(String::from).collect::<Vec<_>>();
     let mut map_args = vec![];
     let mut stream_maps = vec![];
     
-    let (mut v_idx, mut a_idx) = (0, 0);
+    let (mut video_idx, mut audio_idx) = (0, 0);
 
     //construction des arguments
     for (input_idx, (path, base_name)) in videos.iter().enumerate() {
         args.extend(["-i".to_string(), path.clone()]);
 
-        let (mut local_v, mut local_a) = (0, 0);
+        let (mut local_video, mut local_audio) = (0, 0);
 
         for s in crate::execute::ffprobe::get_streams(path) {
             let lang = s.tags.get("language").map(|s| s.as_str()).unwrap_or("und");
 
             match s.codec_type.as_str() {
                 "video" => {
-                    map_args.extend(["-map".into(), format!("{}:v:{}", input_idx, local_v)]);
+                    map_args.extend(["-map".into(), format!("{}:v:{}", input_idx, local_video)]);
                     
                     let desc = if s.disposition.descriptions == 1 { ",characteristics:public.accessibility.describes-video" } else { "" };
-                    stream_maps.push(format!("v:{},agroup:{},name:v_{}_{}{}", v_idx, base_name, lang, v_idx, desc));
+                    stream_maps.push(format!("v:{},agroup:{},name:v_{}_{}{}", video_idx, base_name, lang, video_idx, desc));
                     
-                    v_idx += 1; local_v += 1;
+                    video_idx += 1; local_video += 1;
                 }
                 "audio" => {
-                    map_args.extend(["-map".into(), format!("{}:a:{}", input_idx, local_a)]);
-                    stream_maps.push(format!("a:{},agroup:{},name:a_{}_{},language:{}", a_idx, base_name, lang, a_idx, lang));
+                    map_args.extend(["-map".into(), format!("{}:a:{}", input_idx, local_audio)]);
+                    stream_maps.push(format!("a:{},agroup:{},name:a_{}_{},language:{}", audio_idx, base_name, lang, audio_idx, lang));
                     
-                    a_idx += 1; local_a += 1;
+                    audio_idx += 1; local_audio += 1;
                 }
                 _ => {}
             }
