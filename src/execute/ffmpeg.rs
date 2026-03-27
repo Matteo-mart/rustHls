@@ -12,7 +12,7 @@ pub fn ffmpeg(videos: &[(String, String)], out_dir: &str) {
     //terminal propre
     let mut args = vec!["-hide_banner", "-loglevel", "error"].into_iter().map(String::from).collect::<Vec<_>>();
     let mut map_args = vec![];
-    let mut stream_maps = vec![];
+    let mut stream_maps: Vec<String> = vec![];
     
     let (mut video_idx, mut audio_idx) = (0, 0);
 
