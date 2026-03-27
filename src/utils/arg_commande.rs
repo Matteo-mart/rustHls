@@ -1,4 +1,4 @@
-use std::env;
+use std::{env};
 
 pub fn arg_commande() -> String {
     let args: Vec<String> = env::args().collect();

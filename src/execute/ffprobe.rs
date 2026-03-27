@@ -1,5 +1,4 @@
 use std::process::Command;
-use serde_json;
 use crate::utils::struct_types::{Stream, FFprobeOutput};
 
 /// Commande FFprobe
