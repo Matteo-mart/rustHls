@@ -35,7 +35,7 @@ pub fn get_streams(file: &str) -> Vec<Stream> {
     let stdout = String::from_utf8_lossy(&output.stdout);
 
     let parsed: FFprobeOutput = serde_json::from_str(&stdout)
-        .expect("\nErreur : impossible de parser le JSON FFprobe\n");
+        .expect("\nErreur JSON FFprobe\n");
 
     parsed.streams
 }

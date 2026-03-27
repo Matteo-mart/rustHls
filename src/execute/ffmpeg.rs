@@ -2,6 +2,7 @@ use std::process::{Command, Stdio};
 use std::fs;
 use std::path::Path;
 
+///commande FFmpeg
 pub fn ffmpeg(videos: &[(String, String)], out_dir: &str) {
 
     //création dossiers

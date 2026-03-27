@@ -1,6 +1,7 @@
 use std::fs;
 use crate::execute::ffprobe;
 
+///modification de la playlist
 pub fn modifier_playlist(path: &str, source: &str) -> Result<(), Box<dyn std::error::Error>> {
     let streams = ffprobe::get_streams(source);
     
