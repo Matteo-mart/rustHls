@@ -1,20 +1,18 @@
 use crate::execute::ffprobe::{ffprobe};
 use crate::execute::ffmpeg::ffmpeg;
-use crate::execute::quality::{get_quality};
 
-/// Conversion en HLS processus
+///Convertion HLS
 pub fn convert_to_hls(chemin_video: &str, file_tmp_result: &str) {
     
     ffprobe(chemin_video);
     
-    let base_name = get_quality(chemin_video);
+    let base_name = chemin_video;
     
     ffmpeg(
         &[(
-            chemin_video, 
-            &base_name
+            chemin_video.to_string(),
+            base_name.to_string()
         )], 
         file_tmp_result
     );  
-
 }

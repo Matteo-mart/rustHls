@@ -4,15 +4,21 @@ use crate::utils::struct_types::{Stream, FFprobeOutput};
 
 /// Commande FFprobe
 pub fn ffprobe(chemin_video: &str) -> FFprobeOutput {
+    
     let output = Command::new("ffprobe")
-        .args(["-v", "error", "-i", chemin_video, "-print_format", "json", "-show_streams"])
+        .args([
+            "-v", "error", 
+            "-i", chemin_video, 
+            "-print_format", "json", 
+            "-show_streams"
+        ])
         .output()
         .expect("\nErreur sur la commande FFprobe\n");
 
     let stdout = String::from_utf8_lossy(&output.stdout);
 
     serde_json::from_str(&stdout)
-        .expect("\nErreur parsing JSON ffprobe\n")
+        .expect("\nErreur JSON FFprobe\n")
 }
 
 /// Récupère les streams via FFprobe

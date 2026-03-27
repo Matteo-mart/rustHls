@@ -1,70 +1,68 @@
-use std::process::Command;
-use crate::execute::ffprobe;
-use std::process::Stdio;
+use std::process::{Command, Stdio};
+use std::fs;
+use std::path::Path;
 
-///Commande FFmpeg
-pub fn ffmpeg(chemin_video: &[(&str, &str)], file_tmp_result: &str) {
+/// Commande FFmpeg corrigée
+pub fn ffmpeg(videos: &[(String, String)], file_tmp_result: &str) {
     let master_playlist = "playlist.m3u8";
 
-    for (_, base_name) in chemin_video.iter() {
-        let sub_dir = format!("{}/{}", file_tmp_result, base_name);
-        std::fs::create_dir_all(&sub_dir)
-            .expect(&format!("\nImpossible de créer le dossier {}\n", sub_dir));
+    // 1. Création des sous-répertoires
+    for (_, base_name) in videos {
+        let sub_dir = Path::new(file_tmp_result).join(base_name);
+        fs::create_dir_all(&sub_dir)
+            .unwrap_or_else(|_| panic!("\nImpossible de créer le dossier {:?}\n", sub_dir));
     }
 
     let mut input_args: Vec<String> = vec![];
     let mut map_args: Vec<String> = vec![];
-    let mut stream_map_audio: Vec<String> = vec![];
-    let mut stream_map_video: Vec<String> = vec![];
-    let mut global_idx_audio = 0;
+    let mut stream_maps: Vec<String> = vec![];
+    
     let mut global_idx_video = 0;
+    let mut global_idx_audio = 0;
 
-    for (chemin_video_idx, (chemin_video, base_name)) in chemin_video.iter().enumerate() {
+    // 2. Construction des arguments par fichier
+    for (input_idx, (chemin_video, base_name)) in videos.iter().enumerate() {
         input_args.push("-i".to_string());
-        input_args.push(chemin_video.to_string());
+        input_args.push(chemin_video.clone());
 
-        let streams = ffprobe::get_streams(chemin_video);
-        let mut local_idx_audio = 0;
+        // Note: Assure-toi que ffprobe::get_streams retourne bien une structure compatible
+        let streams = crate::execute::ffprobe::get_streams(chemin_video);
+        
         let mut local_idx_video = 0;
+        let mut local_idx_audio = 0;
 
         for stream in &streams {
-            // Récupération langue depuis tags
             let lang = stream.tags.get("language")
-                .filter(|l| !l.is_empty())
-                .map(|l| l.as_str())
+                .map(|s| s.as_str())
                 .unwrap_or("und");
-
-            // Récupération is_ad depuis disposition
-            let is_ad = stream.disposition.descriptions == 1;
 
             match stream.codec_type.as_str() {
                 "video" => {
                     map_args.push("-map".to_string());
-                    map_args.push(format!("{}:v:{}", chemin_video_idx, local_idx_video));
+                    // Format: index_fichier:v:index_local_video
+                    map_args.push(format!("{}:v:{}", input_idx, local_idx_video));
 
-                    let stream_name = format!("{}/v_{}", base_name, lang);
-                    let desc = if is_ad {
-                        ",characteristics:public.accessibility.describes-video"
-                    } else {
-                        ""
-                    };
-
-                    stream_map_video.push(format!(
-                        "v:{},agroup:{},name:{}{}",
-                        global_idx_video, base_name, stream_name, desc
+                    let is_ad = stream.disposition.descriptions == 1;
+                    let desc = if is_ad { ",characteristics:public.accessibility.describes-video" } else { "" };
+                    
+                    // On définit le flux v:global_idx avec son agroup (nom du dossier/film)
+                    stream_maps.push(format!(
+                        "v:{},agroup:{},name:v_{}_{}{}",
+                        global_idx_video, base_name, lang, input_idx, desc
                     ));
+                    
                     global_idx_video += 1;
                     local_idx_video += 1;
                 }
                 "audio" => {
                     map_args.push("-map".to_string());
-                    map_args.push(format!("{}:a:{}", chemin_video_idx, local_idx_audio));
+                    map_args.push(format!("{}:a:{}", input_idx, local_idx_audio));
 
-                    let stream_name = format!("{}/a_{}", base_name, lang);
-                    stream_map_audio.push(format!(
-                        "a:{},agroup:{},name:{},language:{}",
-                        global_idx_audio, base_name, stream_name, lang
+                    stream_maps.push(format!(
+                        "a:{},agroup:{},name:a_{}_{},language:{}",
+                        global_idx_audio, base_name, lang, input_idx, lang
                     ));
+                    
                     global_idx_audio += 1;
                     local_idx_audio += 1;
                 }
@@ -73,30 +71,30 @@ pub fn ffmpeg(chemin_video: &[(&str, &str)], file_tmp_result: &str) {
         }
     }
 
-    let mut full_stream_map = stream_map_audio.clone();
-    full_stream_map.extend(stream_map_video.clone());
-    let full_stream_map = full_stream_map.join(" ");
+    let full_stream_map = stream_maps.join(" ");
 
-    let segment_filename = format!("{}/%v_%03d.ts", file_tmp_result);
-    let output_playlist = format!("{}/%v.m3u8", file_tmp_result);
-
+    // 3. Configuration de la sortie HLS
     let mut args: Vec<String> = vec![];
+    args.extend(["-hide_banner".to_string(), "-loglevel".to_string(), "error".to_string()]);
     args.extend(input_args);
-    args.extend(["-c".to_string(), "copy".to_string()]);
+    args.extend(["-c".to_string(), "copy".to_string()]); // Remuxing sans ré-encodage
     args.extend(map_args);
+    
     args.extend([
         "-f".to_string(), "hls".to_string(),
         "-var_stream_map".to_string(), full_stream_map,
-        "-hls_flags".to_string(), "round_durations".to_string(),
+        "-hls_flags".to_string(), "round_durations+independent_segments".to_string(),
         "-hls_list_size".to_string(), "0".to_string(),
         "-hls_time".to_string(), "5".to_string(),
         "-master_pl_name".to_string(), master_playlist.to_string(),
-        "-hls_segment_filename".to_string(), segment_filename,
-        output_playlist,
+        // %v sera remplacé par l'index du variant (0, 1, 2...) défini dans var_stream_map
+        "-hls_segment_filename".to_string(), format!("{}/%v_%03d.ts", file_tmp_result),
     ]);
+    
+    // Le fichier de sortie final pour les playlists variantes
+    args.push(format!("{}/%v.m3u8", file_tmp_result));
 
     let status = Command::new("ffmpeg")
-        .args(&["-hide_banner", "-loglevel", "error"])
         .args(&args)
         .stdout(Stdio::null())
         .stderr(Stdio::inherit())
