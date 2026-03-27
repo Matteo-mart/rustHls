@@ -16,12 +16,7 @@ pub fn modifier_playlist(chemin_m3u8: &str, video_source: &str) -> Result<(), Bo
             let is_ad = s.disposition.default == 1
                 || s.disposition.captions == 1
                 || s.disposition.descriptions == 1;
-
-            // if is_ad {
-            //     println!("AD détecté - Default: {}, Captions: {}, Descriptions: {}",
-            //         s.disposition.default, s.disposition.captions, s.disposition.descriptions);
-            // }
-
+            
             audio_map.insert(lang, is_ad);
         }
     }
@@ -51,7 +46,6 @@ pub fn modifier_playlist(chemin_m3u8: &str, video_source: &str) -> Result<(), Bo
     if modifie {
         fs::rename(chemin_m3u8, format!("{}.bak", chemin_m3u8))?;
         fs::write(chemin_m3u8, lignes.join("\n"))?;
-        // println!("Fichier M3U8 modifié");
     }
 
     Ok(())
