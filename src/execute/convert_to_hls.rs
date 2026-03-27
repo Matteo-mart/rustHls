@@ -1,5 +1,6 @@
-use crate::execute::ffprobe::{ffprobe, get_quality};
+use crate::execute::ffprobe::{ffprobe};
 use crate::execute::ffmpeg::ffmpeg;
+use crate::execute::quality::{get_quality};
 
 /// Conversion en HLS processus
 pub fn convert_to_hls(chemin_video: &str, file_tmp_result: &str) {
@@ -15,4 +16,5 @@ pub fn convert_to_hls(chemin_video: &str, file_tmp_result: &str) {
         )], 
         file_tmp_result
     );  
+
 }

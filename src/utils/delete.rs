@@ -2,6 +2,7 @@ use std::fs;
 use std::io;
 use std::path::Path;
 
+///Supprime le dossier "tmp_result"
 pub fn delete<P: AsRef<Path>>(path: P) -> io::Result<()> {
     let path = path.as_ref();
 
@@ -10,11 +11,11 @@ pub fn delete<P: AsRef<Path>>(path: P) -> io::Result<()> {
             Ok(())
         }
         Err(e) if e.kind() == io::ErrorKind::NotFound => {
-            println!("Le dossier {:?} n'existe pas, aucune action requise.", path);
+            println!("\nLe dossier {:?} n'existe pas\n", path);
             Ok(())
         }
         Err(e) => {
-            eprintln!("Erreur lors de la suppression du dossier {:?}: {}", path, e);
+            eprintln!("\nErreur lors de la suppression du dossier {:?}: {}\n", path, e);
             Err(e)
         }
     }

@@ -3,11 +3,16 @@ use serde_json;
 use crate::utils::struct_types::{Stream, FFprobeOutput};
 
 /// Commande FFprobe
-pub fn ffprobe(chemin_video: &str) {
-    Command::new("ffprobe")
+pub fn ffprobe(chemin_video: &str) -> FFprobeOutput {
+    let output = Command::new("ffprobe")
         .args(["-v", "error", "-i", chemin_video, "-print_format", "json", "-show_streams"])
         .output()
-        .expect("Erreur sur la commande FFprobe");
+        .expect("\nErreur sur la commande FFprobe\n");
+
+    let stdout = String::from_utf8_lossy(&output.stdout);
+
+    serde_json::from_str(&stdout)
+        .expect("\nErreur parsing JSON ffprobe\n")
 }
 
 /// Récupère les streams via FFprobe
@@ -20,41 +25,12 @@ pub fn get_streams(file: &str) -> Vec<Stream> {
             "-show_streams",
         ])
         .output()
-        .expect("Erreur FFprobe");
+        .expect("\nErreur FFprobe\n");
 
     let stdout = String::from_utf8_lossy(&output.stdout);
+
     let parsed: FFprobeOutput = serde_json::from_str(&stdout)
-        .expect("Erreur : impossible de parser le JSON FFprobe");
+        .expect("\nErreur : impossible de parser le JSON FFprobe\n");
 
-    parsed.streams.iter().map(|s| Stream {
-        codec_type: s.codec_type.clone(),
-        lang: s.tags.get("language").cloned(),
-        is_description: s.disposition.descriptions.unwrap_or(0) == 1,
-    }).collect()
-}
-
-/// Détecte la hauteur vidéo via FFprobe
-pub fn get_video_height(chemin_video: &str) -> u32 {
-    let output = Command::new("ffprobe")
-        .args([
-            "-v", "error",
-            "-select_streams", "v:0",
-            "-show_entries", "stream=height",
-            "-of", "csv=p=0",
-            chemin_video,
-        ])
-        .output()
-        .expect("Erreur : impossible de lancer FFprobe");
-
-    let stdout = String::from_utf8_lossy(&output.stdout);
-    stdout.trim().parse::<u32>().unwrap_or(0)
-}
-
-/// Retourne la qualité selon la hauteur vidéo
-pub fn get_quality(chemin_video: &str) -> &'static str {
-    match get_video_height(chemin_video) {
-        h if h >= 1080 => "hd",
-        h if h >= 480  => "sd",
-        _              => "md",
-    }
+    parsed.streams
 }

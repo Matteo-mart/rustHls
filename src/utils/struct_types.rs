@@ -1,27 +1,28 @@
 use serde::Deserialize;
-
-pub struct Stream {
-    pub codec_type: String,
-    pub lang: Option<String>,
-    pub is_description: bool,
-}
+use std::collections::HashMap;
 
 #[derive(Deserialize)]
 pub struct FFprobeOutput {
-    pub streams: Vec<FFprobeStream>,
+    pub streams: Vec<Stream>,
 }
 
 #[derive(Deserialize)]
-pub struct FFprobeStream {
+pub struct Stream {
+    // pub index: u32,
     pub codec_type: String,
     #[serde(default)]
-    pub disposition: Disposition,
+    pub tags: HashMap<String, String>,
+    // pub id: Option<String>,
     #[serde(default)]
-    pub tags: std::collections::HashMap<String, String>,
+    pub disposition: Disposition,
 }
 
 #[derive(Deserialize, Default)]
 pub struct Disposition {
-    pub descriptions: Option<u8>,
+    #[serde(default)]
+    pub descriptions: u8,
+    #[serde(default)]
+    pub default: u8,
+    #[serde(default)]
+    pub captions: u8,
 }
-

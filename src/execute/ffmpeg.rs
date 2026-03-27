@@ -1,14 +1,15 @@
 use std::process::Command;
 use crate::execute::ffprobe;
+use std::process::Stdio;
 
-/// Commande FFmpeg
+///Commande FFmpeg
 pub fn ffmpeg(chemin_video: &[(&str, &str)], file_tmp_result: &str) {
     let master_playlist = "playlist.m3u8";
 
     for (_, base_name) in chemin_video.iter() {
         let sub_dir = format!("{}/{}", file_tmp_result, base_name);
         std::fs::create_dir_all(&sub_dir)
-            .expect(&format!("Impossible de créer le dossier {}", sub_dir));
+            .expect(&format!("\nImpossible de créer le dossier {}\n", sub_dir));
     }
 
     let mut input_args: Vec<String> = vec![];
@@ -27,17 +28,27 @@ pub fn ffmpeg(chemin_video: &[(&str, &str)], file_tmp_result: &str) {
         let mut local_idx_video = 0;
 
         for stream in &streams {
-            let lang = stream.lang.as_deref().unwrap_or("und");
+            // Récupération langue depuis tags
+            let lang = stream.tags.get("language")
+                .filter(|l| !l.is_empty())
+                .map(|l| l.as_str())
+                .unwrap_or("und");
+
+            // Récupération is_ad depuis disposition
+            let is_ad = stream.disposition.descriptions == 1;
+
             match stream.codec_type.as_str() {
                 "video" => {
                     map_args.push("-map".to_string());
                     map_args.push(format!("{}:v:{}", chemin_video_idx, local_idx_video));
+
                     let stream_name = format!("{}/v_{}", base_name, lang);
-                    let desc = if stream.is_description {
+                    let desc = if is_ad {
                         ",characteristics:public.accessibility.describes-video"
                     } else {
                         ""
                     };
+
                     stream_map_video.push(format!(
                         "v:{},agroup:{},name:{}{}",
                         global_idx_video, base_name, stream_name, desc
@@ -48,6 +59,7 @@ pub fn ffmpeg(chemin_video: &[(&str, &str)], file_tmp_result: &str) {
                 "audio" => {
                     map_args.push("-map".to_string());
                     map_args.push(format!("{}:a:{}", chemin_video_idx, local_idx_audio));
+
                     let stream_name = format!("{}/a_{}", base_name, lang);
                     stream_map_audio.push(format!(
                         "a:{},agroup:{},name:{},language:{}",
@@ -84,12 +96,15 @@ pub fn ffmpeg(chemin_video: &[(&str, &str)], file_tmp_result: &str) {
     ]);
 
     let status = Command::new("ffmpeg")
+        .args(&["-hide_banner", "-loglevel", "error"])
         .args(&args)
+        .stdout(Stdio::null())
+        .stderr(Stdio::inherit())
         .status()
-        .expect("Erreur : impossible de lancer FFmpeg");
+        .expect("\nErreur : impossible de lancer FFmpeg\n");
 
     if !status.success() {
-        eprintln!("Erreur de conversion FFmpeg");
+        eprintln!("\nErreur de conversion FFmpeg\n");
         std::process::exit(1);
     }
 }
