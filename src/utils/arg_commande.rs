@@ -1,11 +1,12 @@
-use std::{env};
+use std::env;
 
-///commande terminal
-pub fn arg_commande() -> String {
-    let args: Vec<String> = env::args().collect();
+pub fn arg_commande() -> Result<String, String> {
+    let args: Vec<String> = env::args()
+        .collect();
+
     if args.len() < 2 {
-        eprintln!("\nMauvaise commande\n");
-        std::process::exit(1);
+        return Err("Erreur Commande".to_string());
     }
-    args[1].clone()
+    
+    Ok(args[1].clone())
 }
