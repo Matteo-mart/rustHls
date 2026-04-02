@@ -50,7 +50,7 @@ pub fn ffmpeg(videos: &[(String, String)], out_dir: &str) -> Result<(), Box<dyn 
     }
 
     if stream_maps.is_empty() {
-        return Err("Aucun flux trouvé dans les sources.".into());
+        return Err("Aucun flux trouvé".into());
     }
 
     // Configuration de l'encodage HLS
@@ -74,7 +74,7 @@ pub fn ffmpeg(videos: &[(String, String)], out_dir: &str) -> Result<(), Box<dyn 
         .status()?;
 
     if !status.success() {
-        return Err(format!("Échec de FFmpeg (code {})", status.code().unwrap_or(-1)).into());
+        return Err(format!("Échec de FFmpeg code: {}", status.code().unwrap_or(-1)).into());
     }
 
     Ok(())

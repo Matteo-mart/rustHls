@@ -31,7 +31,8 @@ Le programme fonctionne en trois étapes :
     Pour tester avec un fichier video.mp4 :
     Bash
 
-        clear && cargo run 'vidéo à passer'
+        clear && cargo run video/hd.mp4
+        clear && cargo run video/groovy-all-videos-and-all-audios.mp4
 
 ## Structure du code
 

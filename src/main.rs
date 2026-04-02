@@ -14,7 +14,7 @@ fn main() {
             .map_err(|e| format!("[convert_to_hls] {}", e)),
     ];
 
-    println!("\nVidéo passée:\n'{}'", chemin_video);
+    println!("\nVidéo utilisée:\n'{}'", chemin_video);
     println!("\nDossier résultat:\n'{}'", file_tmp_result);
 
     let erreurs: Vec<_> = resultats.iter()
@@ -31,5 +31,6 @@ fn main() {
             .for_each(|e| eprintln!("\nErreur: {}", e));
     }
 
-    println!("\nFin\n");
+    println!("\nFIN\n");
+
 }

@@ -15,7 +15,7 @@ pub fn ffprobe(chemin_video: &str) -> Result<FFprobeOutput, Box<dyn std::error::
 
     if !output.status.success() {
         let err_msg = String::from_utf8_lossy(&output.stderr);
-        return Err(format!("FFprobe a échoué pour '{}': {}", chemin_video, err_msg).into());
+        return Err(format!("FFprobe a échoué pour: '{}'\n {}", chemin_video, err_msg).into());
     }
 
     let stdout = String::from_utf8_lossy(&output.stdout);
