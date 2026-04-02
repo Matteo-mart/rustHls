@@ -4,6 +4,7 @@ mod execute;
 fn main() {
 
     let chemin_video = utils::arg_commande::arg_commande().unwrap_or_default();
+    // let chemin_video = "video/fhd.mp4";
     let file_tmp_result = "tmp_result";
     let chemin_playlist = format!("{}/playlist.m3u8", file_tmp_result);
 
@@ -30,5 +31,5 @@ fn main() {
             .for_each(|e| eprintln!("\nErreur: {}", e));
     }
 
-    println!("\ncoucou\n");
+    println!("\nFin\n");
 }
