@@ -6,7 +6,7 @@ pub fn ffmpeg(videos: &[(String, String)], out_dir: &str) -> Result<(), Box<dyn 
     let out_path = Path::new(out_dir);
     let streams_path = out_path.join("streams");
     
-    // Création du dossier de sortie
+    // Crée le dossier de sortie
     fs::create_dir_all(&streams_path)?;
 
     let mut args = vec!["-hide_banner".to_string(), "-loglevel".to_string(), "error".to_string()];
@@ -21,7 +21,7 @@ pub fn ffmpeg(videos: &[(String, String)], out_dir: &str) -> Result<(), Box<dyn 
         let mut local_video = 0;
         let mut local_audio = 0;
 
-        // Récupération des flux via ffprobe
+        // recupere les flux via FFprobe
         let streams = crate::execute::ffprobe::get_streams(path)?;
 
         for s in streams {
@@ -53,7 +53,7 @@ pub fn ffmpeg(videos: &[(String, String)], out_dir: &str) -> Result<(), Box<dyn 
         return Err("Aucun flux trouvé".into());
     }
 
-    // Configuration de l'encodage HLS
+    // encodage HLS
     args.extend(["-c".into(), "copy".into()]);
     args.extend(map_args);
     args.extend([
@@ -67,7 +67,7 @@ pub fn ffmpeg(videos: &[(String, String)], out_dir: &str) -> Result<(), Box<dyn 
         format!("{}/%v.m3u8", out_dir)
     ]);
 
-    // Exécution de FFmpeg
+    //  execute FFmpeg
     let status = Command::new("ffmpeg")
         .args(&args)
         .stderr(Stdio::inherit())

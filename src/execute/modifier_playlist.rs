@@ -39,12 +39,14 @@ pub fn modifier_playlist(path: &str, source: &str) -> Result<(), Box<dyn std::er
     Ok(())
 }
 
+
 fn extraire(ligne: &str, attr: &str) -> String {
     ligne.split_once(&format!("{}=\"", attr))
         .and_then(|(_, reste)| reste.split('"').next())
         .unwrap_or_default()
         .to_string()
 }
+
 
 fn remplacer(ligne: &str, attr: &str, nv_valeur: &str) -> String {
     let ancienne = extraire(ligne, attr);
