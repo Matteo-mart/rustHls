@@ -11,7 +11,7 @@ pub fn delete<P: AsRef<Path>>(path: P) -> io::Result<()> {
             Ok(())
         }
         Err(e) if e.kind() == io::ErrorKind::NotFound => {
-            eprintln!("rien à supprimer");
+            eprintln!("aucun fichier sous le nom de {:?}", path);
             Ok(())
         }
         Err(e) => {

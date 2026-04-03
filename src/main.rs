@@ -40,11 +40,13 @@ async fn main() {
 
     // stocke les chemins dans 'Redis' si tout c'est bien passé
     if erreurs.is_empty() {
-        utils::redis_store::set("playlist", &playlist).await.ok();
-        utils::redis_store::set("video", &video).await.ok();
+        utils::redis::set("playlist", &playlist).await.ok();
+        utils::redis::set("video", &video).await.ok();
         println!("FIN");
     } else {
         erreurs.iter().for_each(|e| eprintln!("{e}"));
     }
+
+    println!("\nFIN\n");
 
 }

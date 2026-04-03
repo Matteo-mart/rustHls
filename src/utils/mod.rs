@@ -3,4 +3,4 @@ pub mod delete;
 pub mod struct_types;
 pub mod arg_commande;
 pub mod utils;
-pub mod redis_store;    
+pub mod redis;
