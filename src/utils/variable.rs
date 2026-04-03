@@ -14,7 +14,11 @@ pub fn variable() -> (String, String, String) {
 /// démarre redis
 pub fn demarrer_redis() {
     let output = std::process::Command::new("/usr/sbin/redis-server")
-        .args(["--port", "6379", "--daemonize", "yes"])
+        .args([
+            "--port", "6379", 
+            "--daemonize", "yes"
+            // ca démarre en arrière plan sinon ca bloucle
+        ])
         .output()
         .expect("Impossible de lancer redis-server");
 

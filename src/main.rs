@@ -1,7 +1,7 @@
 mod utils;
 mod execute;
 
-use crate::utils::{variable, redis};
+use utils::{variable, redis};
 
 #[tokio::main]
 async fn main() {
