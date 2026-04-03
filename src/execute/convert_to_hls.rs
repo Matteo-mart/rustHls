@@ -2,21 +2,21 @@ use crate::execute::ffprobe::{ffprobe};
 use crate::execute::ffmpeg::ffmpeg;
 use crate::execute::{modifier_playlist};
 
-pub fn convert_to_hls(chemin_video: &str, file_tmp_result: &str, chemin_playlist: &str) -> Result<(), Box<dyn std::error::Error>> {
+pub fn convert_to_hls(video: &str, dossier: &str, playlist: &str) -> Result<(), Box<dyn std::error::Error>> {
     
-    ffprobe(chemin_video)?; 
+    ffprobe(video)?; 
     
-    let base_name = chemin_video;
+    let base_name = video;
     
     ffmpeg(
         &[(
-            chemin_video.to_string(),
+            video.to_string(),
             base_name.to_string()
         )], 
-        file_tmp_result
+        dossier
     )?;  
 
-    modifier_playlist::modifier_playlist(chemin_playlist, chemin_video)?;
+    modifier_playlist::modifier_playlist(playlist, video)?;
 
     Ok(())
 }

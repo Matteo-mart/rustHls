@@ -1,7 +1,7 @@
 use crate::utils;
 
-pub fn utils(file_tmp_result: &str) -> Result<(), Box<dyn std::error::Error>> {
-    utils::delete::delete(file_tmp_result)?;
-    utils::create::create(file_tmp_result)?;
+pub fn utils(dossier: &str) -> Result<(), Box<dyn std::error::Error>> {
+    utils::delete::delete(dossier)?;
+    utils::create::create(dossier)?;
     Ok(())
 }

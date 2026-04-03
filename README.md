@@ -22,6 +22,12 @@ Le programme fonctionne en trois étapes :
         git clone https://github.com/Matteo-mart/rustHls.git
         cd rustHls
 
+    Cargo.toml :
+
+    A ajouter dans les dépendances
+        tokio = { version = "1", features = ["full"] }
+        mini-redis = { git = "https://github.com/tokio-rs/mini-redis" }
+
     Compilation :
     Bash
 
@@ -42,3 +48,7 @@ Le programme fonctionne en trois étapes :
 
     playlist.rs : Génération du texte au format M3U8.
 
+
+
+
+Modifier pour faire les écritures et modifications sur un serveur rust et tout mettre dans le dossier tmp_result
