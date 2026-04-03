@@ -11,22 +11,3 @@ pub fn variable() -> (String, String, String) {
     (video, dossier, playlist)
 }
 
-/// démarre redis
-pub fn demarrer_redis() {
-    let output = std::process::Command::new("/usr/sbin/redis-server")
-        .args([
-            "--port", "6379", 
-            "--daemonize", "yes"
-            // ca démarre en arrière plan sinon ca bloucle
-        ])
-        .output()
-        .expect("Impossible de lancer redis-server");
-
-    if !output.status.success() {
-        eprintln!(
-            "Échec du lancement Redis : {}",
-            String::from_utf8_lossy(&output.stderr)
-        );
-        std::process::exit(1);
-    }
-}
