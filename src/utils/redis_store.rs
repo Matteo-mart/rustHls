@@ -15,7 +15,9 @@ pub async fn set(cle: &str, val: &str) -> Result<()> {
 /// récupère la valeur associé à la clé donnée
 #[allow(dead_code)]
 pub async fn get(cle: &str) -> Result<Option<String>> {
+    
     let val: Option<bytes::Bytes> = connect().await?.get(cle).await?;
     // convertit les bytes en strings
-    Ok(val.and_then(|b| String::from_utf8(b.to_vec()).ok()))
+    Ok(val.and_then(|b| 
+        String::from_utf8(b.to_vec()).ok()))
 }
