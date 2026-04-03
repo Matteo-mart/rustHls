@@ -9,13 +9,11 @@ pub fn convert_to_hls(video: &str, dossier: &str, playlist: &str) -> Result<(), 
     
     let base_name = video;
     
-    ffmpeg(
-        &[(
+    ffmpeg(&[(
             video.to_string(),
             base_name.to_string()
-        )], 
-        dossier
-    )?;  
+        )],
+        dossier)?;  
 
     modifier_playlist::modifier_playlist(playlist, video)?;
 
