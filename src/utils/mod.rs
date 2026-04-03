@@ -5,3 +5,4 @@ pub mod arg_commande;
 pub mod utils;
 pub mod redis;
 pub mod  affichage;
+pub mod variable;
