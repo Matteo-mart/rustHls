@@ -1,19 +1,17 @@
 mod utils;
 mod execute;
-mod redis_store;
 
 #[tokio::main] 
 async fn main() {
+    
+    // récupère le chemin de la vidéo passé en argument dans la commande
     let video    = utils::arg_commande::arg_commande().unwrap_or_default();
     let dossier  = "tmp_result".to_string();
     let playlist = format!("{dossier}/playlist.m3u8");
 
-    // Lance Redis en arrière-plan
+    // lance redis en arrière-plan
     let output = std::process::Command::new("/usr/sbin/redis-server")
-        .args([
-            "--port", "6379", 
-            "--daemonize", "yes"
-        ])
+        .args(["--port", "6379", "--daemonize", "yes"])
         .output()
         .expect("Impossible de lancer le processus redis-server");
 
@@ -22,7 +20,7 @@ async fn main() {
         std::process::exit(1);
     }
 
-    // Prépare le dossier et fais la conversion
+    // prépare le dossier de sortie et lance la conversion
     let erreurs: Vec<String> = [
         utils::utils::utils(&dossier).map_err(|e| format!("[utils] {e}")),
         execute::convert_to_hls::convert_to_hls(&video, &dossier, &playlist).map_err(|e| format!("[hls] {e}")),
@@ -33,9 +31,10 @@ async fn main() {
 
     println!("\nVidéo: '{video}'\n\nDossier: '{dossier}'\n");
 
+    // stocke les chemins dans 'Redis' si tout c'est bien passé
     if erreurs.is_empty() {
-        redis_store::set("playlist", &playlist).await.ok();
-        redis_store::set("chemin_video", &video).await.ok();
+        utils::redis_store::set("playlist", &playlist).await.ok();
+        utils::redis_store::set("chemin_video", &video).await.ok();
         println!("[redis] OK");
     } else {
         erreurs.iter().for_each(|e| eprintln!("{e}"));

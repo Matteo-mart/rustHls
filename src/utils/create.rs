@@ -1,6 +1,7 @@
 use std::fs;
 use std::io;
 
+/// crée le dossier pour le résultat
 pub fn create(dossier: &str) -> io::Result<()> {
     match fs::create_dir(dossier) {
         Ok(_) => Ok(()),

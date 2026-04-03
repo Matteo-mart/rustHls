@@ -2,45 +2,46 @@ use std::process::{Command, Stdio};
 use std::fs;
 use std::path::Path;
 
+/// crée et lance la commande FFmpeg
 pub fn ffmpeg(videos: &[(String, String)], out_dir: &str) -> Result<(), Box<dyn std::error::Error>> {
     let out_path = Path::new(out_dir);
     let streams_path = out_path.join("streams");
-    
-    // Crée le dossier de sortie
+
     fs::create_dir_all(&streams_path)?;
 
+    // arguments global de FFmpeg
     let mut args = vec!["-hide_banner".to_string(), "-loglevel".to_string(), "error".to_string()];
     let mut map_args = vec![];
     let mut stream_maps = vec![];
-    
     let (mut video_idx, mut audio_idx) = (0, 0);
 
     for (input_idx, (path, base_name)) in videos.iter().enumerate() {
         args.extend(["-i".to_string(), path.clone()]);
-        
-        let mut local_video = 0;
-        let mut local_audio = 0;
+        let (mut local_video, mut local_audio) = (0, 0);
 
-        // recupere les flux via FFprobe
+        // analyse les streams du fichier via ffprobe
         let streams = crate::execute::ffprobe::get_streams(path)?;
 
         for s in streams {
             let lang = s.tags.get("language").map(|s| s.as_str()).unwrap_or("und");
-            
+
             match s.codec_type.as_str() {
                 "video" => {
                     map_args.extend(["-map".into(), format!("{}:v:{}", input_idx, local_video)]);
-                    
-                    let desc = if s.disposition.descriptions == 1 { ",characteristics:public.accessibility.describes-video" } else { "" };
+
+                    // ajoute le flag d'accessibilité si c'est une vidéo avec description audio
+                    let desc = if s.disposition.descriptions == 1 {
+                        ",characteristics:public.accessibility.describes-video"
+                    } else {
+                        ""
+                    };
                     stream_maps.push(format!("v:{},agroup:{},name:v_{}_{}{}", video_idx, base_name, lang, video_idx, desc));
-                    
                     video_idx += 1;
                     local_video += 1;
                 }
                 "audio" => {
                     map_args.extend(["-map".into(), format!("{}:a:{}", input_idx, local_audio)]);
                     stream_maps.push(format!("a:{},agroup:{},name:a_{}_{},language:{}", audio_idx, base_name, lang, audio_idx, lang));
-                    
                     audio_idx += 1;
                     local_audio += 1;
                 }
@@ -53,7 +54,7 @@ pub fn ffmpeg(videos: &[(String, String)], out_dir: &str) -> Result<(), Box<dyn 
         return Err("Aucun flux trouvé".into());
     }
 
-    // encodage HLS
+    // copie les streams sans ré-encodage
     args.extend(["-c".into(), "copy".into()]);
     args.extend(map_args);
     args.extend([
@@ -67,7 +68,7 @@ pub fn ffmpeg(videos: &[(String, String)], out_dir: &str) -> Result<(), Box<dyn 
         format!("{}/%v.m3u8", out_dir)
     ]);
 
-    //  execute FFmpeg
+    // lance FFmpeg
     let status = Command::new("ffmpeg")
         .args(&args)
         .stderr(Stdio::inherit())

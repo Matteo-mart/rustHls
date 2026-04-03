@@ -2,6 +2,7 @@ use std::fs;
 use std::io;
 use std::path::Path;
 
+/// supprime le dossier du résultat
 pub fn delete<P: AsRef<Path>>(path: P) -> io::Result<()> {
     let path = path.as_ref();
 

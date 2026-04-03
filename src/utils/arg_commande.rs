@@ -1,5 +1,6 @@
 use std::env;
 
+/// récupère la vidéo mise dans la commande 
 pub fn arg_commande() -> Result<String, String> {
     let args: Vec<String> = env::args()
         .collect();
