@@ -19,7 +19,8 @@ async fn main() {
         .expect("Impossible de lancer le processus redis-server");
 
     if !output.status.success() {
-        eprintln!("echec du lancement du serveur: {}", String::from_utf8_lossy(&output.stderr));
+        eprintln!("echec du lancement du serveur: {}",  
+            String::from_utf8_lossy(&output.stderr));
         std::process::exit(1);
     }
 
@@ -35,13 +36,13 @@ async fn main() {
     .filter_map(|r| r.as_ref().err().cloned())
     .collect();
 
-    println!("\nVidéo: '{video}'\n\nDossier: '{dossier}'\n");
+    println!("\nVidéo: '{video}'\n Dossier: '{dossier}'\n");
 
     // stocke les chemins dans 'Redis' si tout c'est bien passé
     if erreurs.is_empty() {
         utils::redis_store::set("playlist", &playlist).await.ok();
         utils::redis_store::set("video", &video).await.ok();
-        println!("\nFIN\n");
+        println!("FIN");
     } else {
         erreurs.iter().for_each(|e| eprintln!("{e}"));
     }
