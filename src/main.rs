@@ -9,7 +9,7 @@ async fn main() {
     let dossier  = "tmp_result".to_string();
     let playlist = format!("{dossier}/playlist.m3u8");
 
-    // lance redis en arrière-plan
+    // lance redis en arrière-plan, sinon blockage à output indéfiniment
     let output = std::process::Command::new("/usr/sbin/redis-server")
         .args(["--port", "6379", "--daemonize", "yes"])
         .output()
@@ -35,7 +35,7 @@ async fn main() {
     if erreurs.is_empty() {
         utils::redis_store::set("playlist", &playlist).await.ok();
         utils::redis_store::set("chemin_video", &video).await.ok();
-        println!("[redis] OK");
+        println!("\nFIN\n");
     } else {
         erreurs.iter().for_each(|e| eprintln!("{e}"));
     }
