@@ -10,13 +10,20 @@ pub fn ffmpeg(videos: &[(String, String)], out_dir: &str) -> Result<(), Box<dyn 
     fs::create_dir_all(&streams_path)?;
 
     // arguments global de FFmpeg
-    let mut args = vec!["-hide_banner".to_string(), "-loglevel".to_string(), "error".to_string()];
+    let mut args = vec![
+        "-hide_banner".to_string(), 
+        "-loglevel".to_string(), 
+        "error".to_string()
+    ];
     let mut map_args = vec![];
     let mut stream_maps = vec![];
     let (mut video_idx, mut audio_idx) = (0, 0);
 
     for (input_idx, (path, base_name)) in videos.iter().enumerate() {
-        args.extend(["-i".to_string(), path.clone()]);
+        args.extend([
+            "-i".to_string(), 
+            path.clone()
+        ]);
         let (mut local_video, mut local_audio) = (0, 0);
 
         // analyse les streams du fichier via ffprobe

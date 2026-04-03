@@ -1,5 +1,6 @@
 use mini_redis::{Client, Result};
 
+
 const ADDR: &str = "127.0.0.1:6379";
 
 /// ouvre la connexion avec le serveur 'Redis' local
