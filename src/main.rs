@@ -9,21 +9,27 @@ async fn main() {
     let dossier  = "tmp_result".to_string();
     let playlist = format!("{dossier}/playlist.m3u8");
 
-    // lance redis en arrière-plan, sinon blockage à output indéfiniment
+    // lance redis en arrière-plan, sinon bloqué à output indéfiniment
     let output = std::process::Command::new("/usr/sbin/redis-server")
-        .args(["--port", "6379", "--daemonize", "yes"])
+        .args([
+            "--port", "6379", 
+            "--daemonize", "yes"
+        ])
         .output()
         .expect("Impossible de lancer le processus redis-server");
 
     if !output.status.success() {
-        eprintln!("[redis] echec du lancement: {}", String::from_utf8_lossy(&output.stderr));
+        eprintln!("echec du lancement du serveur: {}", String::from_utf8_lossy(&output.stderr));
         std::process::exit(1);
     }
 
     // prépare le dossier de sortie et lance la conversion
     let erreurs: Vec<String> = [
+    
         utils::utils::utils(&dossier).map_err(|e| format!("[utils] {e}")),
-        execute::convert_to_hls::convert_to_hls(&video, &dossier, &playlist).map_err(|e| format!("[hls] {e}")),
+    
+        execute::convert_to_hls::convert_to_hls(&video, &dossier, &playlist).map_err(|e| format!("[convert_to_hls] {e}")),
+    
     ]
     .iter()
     .filter_map(|r| r.as_ref().err().cloned())
@@ -39,4 +45,5 @@ async fn main() {
     } else {
         erreurs.iter().for_each(|e| eprintln!("{e}"));
     }
+
 }
