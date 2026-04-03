@@ -1,5 +1,4 @@
 
-
 pub fn affichage (dossier: &str, video: &str) {
 
     println!("\nVidéo passée: {}\n", video);
